@@ -1,8 +1,9 @@
 [
   {
+    "firstname": "Adnan",
+    "lastname": "Chamseddin",
+    "ighandle": "wheres651",
     "email": "adnan.chamseddin@icloud.com",
-    "password": "theowner",
-    "joined_waitlist": true,
-    "picked": false
+    "picked": true
   }
 ]
