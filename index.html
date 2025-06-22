@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ORBITE</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <style>
+            :root {
+                --primary: #ffffff;
+                --secondary: #111111;
+                --accent: #353535;
+                --accent-dark: #353535;
+                --text-light: #cccccc;
+                --bg-dark: #0a0a0a;
+                --bg-darker: #050505;
+                --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+                --is-public: false; /* Change to true when ready to launch */
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                margin: 0;
+                font-family: "Outfit", sans-serif;
+                background-color: var(--bg-dark);
+                color: var(--primary);
+                overflow-x: hidden;
+            }
+
+            /* Scrollbar */
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+            ::-webkit-scrollbar-track {
+                background: var(--bg-darker);
+            }
+            ::-webkit-scrollbar-thumb {
+                background: var(--accent);
+                border-radius: 4px;
+            }
+
+            /* Header */
+            header {
+                background: rgba(17, 17, 17, 0.95);
+                padding: 15px 40px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                transition: var(--transition);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            header.scrolled {
+                padding: 10px 40px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            }
+
+            .logo-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            header .logo {
+                font-size: 28px;
+                font-weight: 900;
+                letter-spacing: 1px;
+                background: linear-gradient(90deg, var(--accent), #353535);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                transition: var(--transition);
+            }
+
+            .drop-badge {
+                background: var(--accent);
+                color: var(--primary);
+                padding: 3px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 1px;
+            }
+
+            header nav {
+                display: flex;
+                align-items: center;
+                gap: 25px;
+            }
+
+            header nav a {
+                color: var(--primary);
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 16px;
+                letter-spacing: 0.5px;
+                position: relative;
+                transition: var(--transition);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            header nav a span {
+                font-size: 12px;
+                margin-top: 2px;
+            }
+
+            header nav a:not(.cart-btn):after {
+                content: "";
+                position: absolute;
+                width: 0;
+                height: 2px;
+                bottom: -5px;
+                left: 0;
+                background-color: var(--primary);
+                transition: var(--transition);
+            }
+
+            header nav a:hover:not(.cart-btn):after {
+                width: 100%;
+            }
+
+            .cart-btn {
+                background: var(--primary);
+                color: var(--secondary);
+                padding: 8px 15px;
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: var(--transition);
+                font-weight: 700;
+            }
+
+            .cart-btn:hover {
+                background: var(--accent);
+                color: var(--primary);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(77, 124, 255, 0.3);
+            }
+
+            .hamburger {
+                display: none;
+                cursor: pointer;
+                font-size: 1.5rem;
+            }
+
+            /* Waitlist Bar */
+            .waitlist-bar {
+                background: var(--accent);
+                color: var(--primary);
+                text-align: center;
+                padding: 10px;
+                font-weight: 600;
+                position: relative;
+                z-index: 999;
+                font-size: 14px;
+            }
+
+            .waitlist-bar a {
+                color: var(--primary);
+                text-decoration: underline;
+                margin-left: 5px;
+                cursor: pointer;
+                font-weight: 700;
+            }
+
+            /* Hero Section */
+            .hero {
+                text-align: center;
+                padding: 180px 20px 100px;
+                position: relative;
+                overflow: hidden;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background: linear-gradient(
+                        rgba(0, 0, 0, 0.7),
+                        rgba(0, 0, 0, 0.7)
+                    ),
+                    no-repeat center center/cover;
+            }
+
+            .hero h1 {
+                font-size: clamp(2.5rem, 5vw, 4.5rem);
+                font-weight: 900;
+                margin-bottom: 20px;
+                line-height: 1.1;
+                max-width: 1000px;
+                opacity: 0;
+                transform: translateY(30px);
+                animation: fadeInUp 1s ease forwards 0.3s;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+            }
+
+            .hero p {
+                font-size: clamp(1rem, 2vw, 1.2rem);
+                color: var(--text-light);
+                margin-bottom: 40px;
+                max-width: 600px;
+                opacity: 0;
+                transform: translateY(30px);
+                animation: fadeInUp 1s ease forwards 0.5s;
+                letter-spacing: 1px;
+            }
+
+            .hero-btns {
+                display: flex;
+                gap: 20px;
+                opacity: 0;
+                transform: translateY(30px);
+                animation: fadeInUp 1s ease forwards 0.7s;
+            }
+
+            .btn {
+                padding: 16px 32px;
+                font-weight: 700;
+                border-radius: 30px;
+                cursor: pointer;
+                transition: var(--transition);
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                border: none;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+            }
+
+            .btn-primary {
+                background-color: var(--primary);
+                color: var(--secondary);
+            }
+
+            .btn-primary:hover {
+                background: var(--accent);
+                color: var(--primary);
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(77, 124, 255, 0.3);
+            }
+
+            .btn-secondary {
+                background: transparent;
+                color: var(--primary);
+                border: 2px solid var(--primary);
+            }
+
+            .btn-secondary:hover {
+                background: var(--primary);
+                color: var(--secondary);
+                transform: translateY(-5px);
+            }
+
+            /* Announcement Bar */
+            .announcement {
+                text-align: center;
+                font-size: clamp(1rem, 2vw, 1.2rem);
+                background: linear-gradient(
+                    90deg,
+                    var(--bg-darker),
+                    var(--secondary),
+                    var(--bg-darker)
+                );
+                padding: 15px;
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .announcement::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.1),
+                    transparent
+                );
+                animation: shine 3s infinite;
+            }
+
+            /* Drop Section */
+            .section {
+                max-width: 1200px;
+                margin: 100px auto;
+                padding: 0 40px;
+            }
+
+            .section-header {
+                margin-bottom: 50px;
+                text-align: center;
+            }
+
+            .section-header h2 {
+                font-size: clamp(1.8rem, 3vw, 2.5rem);
+                font-weight: 800;
+                margin-bottom: 15px;
+                position: relative;
+                display: inline-block;
+                text-transform: uppercase;
+                letter-spacing: 3px;
+            }
+            /* Profile Photo Styles */
+            .profile-photo-container {
+                position: relative;
+                margin-left: 15px;
+            }
+
+            .profile-photo {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                cursor: pointer;
+                border: 2px solid var(--accent);
+                transition: var(--transition);
+            }
+
+            .profile-photo:hover {
+                transform: scale(1.1);
+            }
+
+            .profile-dropdown {
+                position: absolute;
+                top: 50px;
+                right: 0;
+                background: var(--secondary);
+                border: 1px solid var(--accent);
+                border-radius: 8px;
+                padding: 15px;
+                width: 200px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                display: none;
+                z-index: 1001;
+            }
+
+            .profile-dropdown p {
+                margin-bottom: 10px;
+                word-break: break-all;
+            }
+
+            .logout-btn {
+                color: var(--primary);
+                text-decoration: none;
+                font-weight: 600;
+                display: block;
+                text-align: center;
+                padding: 8px;
+                background: var(--accent);
+                border-radius: 5px;
+                transition: var(--transition);
+            }
+
+            .logout-btn:hover {
+                background: var(--accent-dark);
+            }
+            .section-header h2::after {
+                content: "";
+                position: absolute;
+                width: 50%;
+                height: 3px;
+                bottom: -10px;
+                left: 25%;
+                background: var(--accent);
+            }
+
+            .section-header p {
+                color: var(--text-light);
+                max-width: 700px;
+                margin: 0 auto;
+                font-size: clamp(0.9rem, 2vw, 1.1rem);
+                line-height: 1.6;
+                letter-spacing: 1px;
+            }
+
+            .drop-single {
+                background: var(--secondary);
+                border-radius: 15px;
+                overflow: hidden;
+                transition: var(--transition);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .drop-btns {
+                display: flex;
+                gap: 20px;
+                justify-content: center;
+                padding: 30px;
+            }
+
+            /* Product Page */
+            .product-page {
+                display: none;
+                max-width: 1200px;
+                margin: 100px auto;
+                padding: 0 40px;
+            }
+
+            .product-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+            }
+
+            .product-gallery {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .product-main-image {
+                width: 100%;
+                height: 500px;
+                object-fit: cover;
+                border-radius: 10px;
+                margin-bottom: 20px;
+            }
+
+            .product-thumbnails {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+
+            .product-thumbnail {
+                width: 100%;
+                height: 100px;
+                object-fit: cover;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            .product-thumbnail:hover {
+                opacity: 0.8;
+            }
+
+            .product-details {
+                padding: 20px;
+            }
+            .view-product-btn {
+                display: none; /* Hidden by default */
+            }
+
+            .product-title {
+                font-size: 2rem;
+                margin-bottom: 15px;
+                letter-spacing: 1px;
+            }
+
+            .product-price {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--accent);
+                margin-bottom: 20px;
+            }
+
+            .product-description {
+                color: var(--text-light);
+                margin-bottom: 30px;
+                line-height: 1.6;
+                letter-spacing: 0.5px;
+            }
+
+            .product-options {
+                margin-bottom: 30px;
+            }
+
+            .option-group {
+                margin-bottom: 20px;
+            }
+
+            .option-title {
+                font-weight: 600;
+                margin-bottom: 10px;
+                display: block;
+                letter-spacing: 1px;
+            }
+
+            .option-buttons {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .option-btn {
+                padding: 8px 16px;
+                border: 1px solid var(--text-light);
+                border-radius: 5px;
+                background: transparent;
+                color: var(--primary);
+                cursor: pointer;
+                transition: var(--transition);
+                font-size: 14px;
+            }
+
+            .option-btn.selected {
+                background: var(--accent);
+                border-color: var(--accent);
+                color: var(--primary);
+            }
+
+            .policy-text {
+                font-size: 12px;
+                color: var(--text-light);
+                margin-top: 30px;
+                line-height: 1.6;
+            }
+
+            .add-to-cart {
+                width: 100%;
+                padding: 15px;
+                background: var(--accent);
+                color: var(--primary);
+                border: none;
+                border-radius: 5px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: var(--transition);
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                margin-top: 20px;
+            }
+
+            .add-to-cart:hover {
+                background: var(--accent-dark);
+            }
+
+            /* Countdown */
+            .countdown {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin: 40px 0;
+            }
+
+            .countdown-item {
+                text-align: center;
+                background: var(--secondary);
+                padding: 20px;
+                border-radius: 10px;
+                min-width: 80px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .countdown-number {
+                font-size: 2rem;
+                font-weight: 800;
+                color: var(--accent);
+            }
+
+            .countdown-label {
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: var(--text-light);
+            }
+
+            /* Waitlist Modal */
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 2000;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .modal-content {
+                background: var(--secondary);
+                padding: 40px;
+                border-radius: 15px;
+                max-width: 500px;
+                width: 90%;
+                position: relative;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .close-modal {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--text-light);
+            }
+
+            .modal-title {
+                font-size: 1.8rem;
+                margin-bottom: 20px;
+                text-align: center;
+                letter-spacing: 1px;
+            }
+
+            .modal-form {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .modal-input {
+                padding: 12px 15px;
+                border-radius: 5px;
+                border: none;
+                background: rgba(255, 255, 255, 0.1);
+                color: var(--primary);
+                font-family: "Outfit", sans-serif;
+            }
+
+            .modal-submit {
+                padding: 12px;
+                background: var(--accent);
+                color: var(--primary);
+                border: none;
+                border-radius: 5px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: var(--transition);
+                letter-spacing: 1px;
+            }
+
+            .modal-submit:hover {
+                background: var(--accent-dark);
+            }
+
+            /* Newsletter */
+            .newsletter {
+                background: var(--secondary);
+                padding: 80px 40px;
+                border-radius: 20px;
+                text-align: center;
+                margin: 100px auto;
+                max-width: 800px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .newsletter h2 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+                letter-spacing: 1px;
+            }
+
+            .newsletter p {
+                color: var(--text-light);
+                margin-bottom: 30px;
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
+                letter-spacing: 0.5px;
+            }
+
+            .newsletter-form {
+                display: flex;
+                max-width: 500px;
+                margin: 0 auto;
+                gap: 10px;
+            }
+
+            .newsletter-input {
+                flex: 1;
+                padding: 15px 20px;
+                border-radius: 50px;
+                border: none;
+                font-family: "Outfit", sans-serif;
+                font-size: 16px;
+                background: rgba(255, 255, 255, 0.1);
+                color: var(--primary);
+                transition: var(--transition);
+                letter-spacing: 0.5px;
+            }
+
+            .newsletter-input:focus {
+                outline: none;
+                background: rgba(255, 255, 255, 0.2);
+            }
+
+            .newsletter-btn {
+                padding: 15px 30px;
+                border-radius: 50px;
+                border: none;
+                background: var(--accent);
+                color: var(--primary);
+                font-weight: 700;
+                cursor: pointer;
+                transition: var(--transition);
+                letter-spacing: 1px;
+            }
+
+            .newsletter-btn:hover {
+                background: var(--primary);
+                color: var(--accent);
+                transform: translateY(-2px);
+            }
+
+            /* Footer */
+            footer {
+                background: var(--secondary);
+                padding: 80px 40px 40px;
+                text-align: center;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .footer-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 40px;
+                text-align: left;
+                margin-bottom: 60px;
+            }
+
+            .footer-column h3 {
+                font-size: 1.2rem;
+                margin-bottom: 20px;
+                position: relative;
+                display: inline-block;
+                letter-spacing: 1px;
+            }
+
+            .footer-column h3::after {
+                content: "";
+                position: absolute;
+                width: 50%;
+                height: 2px;
+                bottom: -8px;
+                left: 0;
+                background: var(--accent);
+            }
+
+            .footer-column ul {
+                list-style: none;
+            }
+
+            .footer-column li {
+                margin-bottom: 12px;
+            }
+
+            .footer-column a {
+                color: var(--text-light);
+                text-decoration: none;
+                transition: var(--transition);
+                letter-spacing: 0.5px;
+                font-size: 14px;
+            }
+
+            .footer-column a:hover {
+                color: var(--primary);
+                padding-left: 5px;
+            }
+
+            .social-links {
+                display: flex;
+                gap: 20px;
+                margin-top: 20px;
+            }
+
+            .social-links a {
+                color: var(--primary);
+                font-size: 1.2rem;
+                transition: var(--transition);
+            }
+
+            .social-links a:hover {
+                color: var(--accent);
+                transform: translateY(-3px);
+            }
+
+            .footer-bottom {
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                padding-top: 30px;
+                font-size: 0.9rem;
+                color: var(--text-light);
+                letter-spacing: 0.5px;
+            }
+
+            /* Admin Panel */
+            .admin-panel {
+                position: fixed;
+                bottom: 60px; /* Slightly above the toggle button */
+                left: 20px; /* Changed from right to left */
+                background: var(--secondary);
+                padding: 15px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                z-index: 3000;
+                border: 1px solid var(--accent);
+            }
+
+            /* Admin Toggle Button */
+            .admin-toggle {
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                background: var(--accent);
+                color: var(--primary);
+                border: none;
+                padding: 8px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: 700;
+                transition: var(--transition);
+                z-index: 1000;
+                opacity: 0.2; /* lower value means more transparent */
+            }
+
+            .admin-toggle:hover {
+                background: var(--accent-dark);
+            }
+
+            /* Admin Panel Controls */
+            .admin-controls {
+                display: none;
+                margin-top: 15px;
+            }
+
+            .admin-controls.show {
+                display: block;
+            }
+
+            /* Buttons inside the Admin Panel */
+            .admin-btn {
+                background: var(--primary);
+                color: var(--secondary);
+                border: none;
+                padding: 8px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: 700;
+                margin-top: 10px;
+                width: 100%;
+                transition: var(--transition);
+            }
+
+            .admin-btn:hover {
+                background: var(--text-light);
+            }
+
+            /* Animations */
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes shine {
+                100% {
+                    left: 100%;
+                }
+            }
+
+            @keyframes float {
+                0%,
+                100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-20px);
+                }
+            }
+
+            .floating {
+                animation: float 6s ease-in-out infinite;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                header {
+                    padding: 15px 20px;
+                }
+
+                header nav {
+                    position: fixed;
+                    top: 70px;
+                    left: 0;
+                    right: 0;
+                    background: var(--secondary);
+                    flex-direction: column;
+                    padding: 20px;
+                    gap: 20px;
+                    transform: translateY(-150%);
+                    transition: var(--transition);
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                }
+
+                header nav.active {
+                    transform: translateY(0);
+                }
+
+                .hamburger {
+                    display: block;
+                }
+
+                .hero {
+                    padding: 150px 20px 80px;
+                }
+
+                .hero-btns {
+                    flex-direction: column;
+                    width: 100%;
+                    max-width: 300px;
+                }
+
+                .btn {
+                    width: 100%;
+                }
+
+                .section {
+                    padding: 0 20px;
+                    margin: 70px auto;
+                }
+
+                .product-container {
+                    grid-template-columns: 1fr;
+                }
+
+                .product-main-image {
+                    height: 400px;
+                }
+
+                .newsletter-form {
+                    flex-direction: column;
+                }
+
+                .countdown {
+                    flex-wrap: wrap;
+                }
+
+                .drop-btns {
+                    flex-direction: column;
+                }
+
+                .logo-container {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 5px;
+                }
+
+                .drop-badge {
+                    margin-left: 0;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Waitlist Bar -->
+        <div class="waitlist-bar">
+            Join the DROP001 waitlist for exclusive early access
+            <a id="open-waitlist">Sign up now</a>
+        </div>
+
+        <header id="header">
+            <div class="logo-container">
+                <div class="logo">ORBITE.LB</div>
+                <div class="drop-badge">DROP001</div>
+                <!-- Add this profile photo (hidden by default) -->
+                <div class="profile-photo-container" id="profile-photo-container" style="display: none;">
+                    <img 
+                        src="https://i.pinimg.com/736x/a3/31/a8/a331a8d0a8ff50827c6cb3437f336a30.jpg" 
+                        alt="Profile" 
+                        class="profile-photo" 
+                        id="profile-photo"
+                    >
+                    <div class="profile-dropdown" id="profile-dropdown">
+                        <p id="profile-email">No email found</p>
+                        <a href="/logout" class="logout-btn">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+            <nav id="nav">
+                <a href="{{account['href']}}">
+                    <i class="fas fa-person"></i><span>{{account["title_text"]}}</span></a
+                >
+                <a href="#home"><i class="fas fa-home"></i><span>Home</span></a>
+                <a href="#drop"><i class="fas fa-fire"></i><span>Drop</span></a>
+                <a href="#cart" class="cart-btn"
+                    ><i class="fas fa-shopping-bag"></i>Cart</a
+                >
+            </nav>
+            <div class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </header>
+
+        <section class="hero" id="home">
+            <h1>WHERE STREETWEAR ORBITS THE WORLD OF LUXURY</h1>
+            <p>
+                Exclusive limited edition drops that blend premium craftsmanship
+                with urban edge. DROP001 coming soon.
+            </p>
+            <div class="hero-btns">
+                <a href="#drop" class="btn btn-primary">View Drop</a>
+                <a href="{{account['href']}}" class="btn btn-secondary">{{account["title_text"]}}</a>
+            </div>
+        </section>
+
+        <div class="announcement">
+            <span class="floating"></span> DROP001 – Launching in
+            <span id="countdown"></span> <span class="floating"></span>
+        </div>
+
+        <section class="section" id="drop">
+            <div class="section-header">
+                <h2>DROP001 – Our first Collection</h2>
+                <p>
+                    Our inaugural luxury streetwear collection featuring premium
+                    fabrics and exclusive designs.
+                </p>
+            </div>
+
+            <div class="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days">00</div>
+                    <div class="countdown-label">Days</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="hours">00</div>
+                    <div class="countdown-label">Hours</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">00</div>
+                    <div class="countdown-label">Minutes</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="seconds">00</div>
+                    <div class="countdown-label">Seconds</div>
+                </div>
+            </div>
+
+            <div class="drop-single">
+                <img
+                    src="https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                    alt="ORBITE DROP001"
+                    style="width: 100%; max-height: 500px; object-fit: cover"
+                />
+                <div class="drop-btns">
+                    <button class="btn btn-primary" {{account['waitlist_link']}}>
+                        {{account["waitlist_text"]}}
+                    </button>
+                    <button 
+                        class="btn btn-secondary" 
+                        id="view-product-btn" 
+                        style="display: none;"
+                        onclick="location.href='#product-page'"
+                    >
+                        View Product
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Page (Hidden by default) -->
+        <div class="product-page" id="product-page">
+            <div class="product-container">
+                <div class="product-gallery">
+                    <img
+                        src="https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                        alt="ORBITE T-Shirt"
+                        class="product-main-image"
+                        id="main-image"
+                    />
+                    <div class="product-thumbnails">
+                        <img
+                            src="https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
+                            alt="T-Shirt Front"
+                            class="product-thumbnail"
+                            data-image="https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                        />
+                        <img
+                            src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
+                            alt="T-Shirt Back"
+                            class="product-thumbnail"
+                            data-image="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                        />
+                        <img
+                            src="https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
+                            alt="T-Shirt Detail"
+                            class="product-thumbnail"
+                            data-image="https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                        />
+                        <img
+                            src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
+                            alt="T-Shirt Material"
+                            class="product-thumbnail"
+                            data-image="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                        />
+                    </div>
+                </div>
+                <div class="product-details">
+                    <h1 class="product-title">ORBITE Signature T-Shirt</h1>
+                    <div class="product-price">$39,99</div>
+                    <div class="product-description">
+                        <p>
+                            The ORBITE DROP001 set features a premium oversized
+                            T-shirt and matching shorts, crafted with comfort,
+                            structure, and elevated streetwear in mind. The
+                            T-shirt is made from 240 GSM cotton jersey and
+                            finished with a signature puff-printed ORBITE logo
+                            and custom neck tag. The shorts, cut from
+                            heavyweight 320 GSM loopback fleece, include an
+                            elastic waistband with drawcord and feature a
+                            matching front-leg logo print. Built for daily wear,
+                            styled for limited luxury.
+                        </p>
+
+                        <p>
+                            <strong>T-Shirt Fabric:</strong> 100% pre-shrunk,
+                            reactive-dyed cotton jersey (240gsm), soft-washed
+                            for comfort
+                        </p>
+                        <p>
+                            <strong>Shorts Fabric:</strong> 80% cotton / 20%
+                            polyester loopback fleece (320gsm), enzyme-washed
+                            and reactive-dyed for long-lasting depth
+                        </p>
+                    </div>
+
+                    <div class="product-options">
+                        <div class="option-group">
+                            <span class="option-title">Color</span>
+                            <div class="option-buttons" id="color-options">
+                                <button
+                                    class="option-btn selected"
+                                    data-color="navy"
+                                    data-image-folder="navy"
+                                >
+                                    Navy Blue
+                                </button>
+                                <button
+                                    class="option-btn"
+                                    data-color="pink"
+                                    data-image-folder="pink"
+                                >
+                                    Baby Pink
+                                </button>
+                                <button
+                                    class="option-btn"
+                                    data-color="black"
+                                    data-image-folder="black"
+                                >
+                                    Black
+                                </button>
+                                <button
+                                    class="option-btn"
+                                    data-color="gray"
+                                    data-image-folder="gray"
+                                >
+                                    Gray
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="option-group">
+                            <span class="option-title">Size</span>
+                            <div class="option-buttons" id="size-options">
+                                <button class="option-btn" data-size="XS">
+                                    XS
+                                </button>
+                                <button class="option-btn" data-size="S">
+                                    S
+                                </button>
+                                <button
+                                    class="option-btn selected"
+                                    data-size="M"
+                                >
+                                    M
+                                </button>
+                                <button class="option-btn" data-size="L">
+                                    L
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="policy-text">
+                        <p>
+                            <strong>Store Policy:</strong> All sales are final.
+                            No returns or exchanges. Limited quantities
+                            available.
+                        </p>
+                    </div>
+
+                    <button class="add-to-cart" id="add-to-cart">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="newsletter" id="join">
+            {{account["form_html"]}}
+
+        </div>
+
+        <!-- Waitlist Modal -->
+        <div class="modal" id="waitlist-modal">
+<div class="modal-content">
+    <span class="close-modal" id="close-waitlist">&times;</span>
+    <h2 class="modal-title">Join the DROP001 Waitlist</h2>
+    <p
+        style="
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-light);
+        "
+    >
+        Get exclusive early access to our first collection
+    </p>
+    <form class="modal-form" id="waitlist-form">
+        <input
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            class="modal-input"
+            required
+        />
+        <input
+            type="text"
+            name="lastName"
+            placeholder="Last Name"
+            class="modal-input"
+            required
+        />
+        <input
+            type="text"
+            name="instagram"
+            placeholder="Instagram Handle"
+            class="modal-input"
+            required
+        />
+        <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            class="modal-input"
+            required
+        />
+        <button type="submit" class="modal-submit">
+            Join Waitlist
+        </button>
+    </form>
+</div>
+
+
+        </div>
+
+        <footer id="contact">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>ORBITE</h3>
+                    <p>
+                        Where streetwear meets the world of luxury. Limited
+                        edition drops of premium apparel.
+                    </p>
+                    <div class="social-links">
+                        <a
+                            href="https://instagram.com/orbite.lb"
+                            target="_blank"
+                            ><i class="fab fa-instagram"></i
+                        ></a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Shop</h3>
+                    <ul>
+                        <li><a href="#drop">DROP001</a></li>
+                        <li><a href="#">Future Drops</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Info</h3>
+                    <ul>
+                        <li><a href="#">Store Policy</a></li>
+                        <li><a href="#contact">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li>
+                            <a href="mailto:orbitebrand@gmail.com">orbitebrand@gmail.com</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                © 2025 ORBITE. All Rights Reserved. | Follow us on Instagram:
+                <strong>@orbite.lb</strong>
+            </div>
+        </footer>
+
+
+        
+        <!-- Admin Panel -->
+<div class="admin-panel">
+    <button class="admin-toggle" id="admin-toggle">Admin</button>
+    <div class="admin-controls" id="admin-controls" style="display: none;">
+        <button class="admin-btn" id="toggle-public">
+            Make Public
+        </button>
+        <button class="admin-btn" id="view-accounts">
+            View Accounts
+        </button>
+        <button class="admin-btn" id="view-submissions">
+            View Submissions
+        </button>
+
+    </div>
+</div>
+
+
+
+
+        <script>
+            // Mobile Navigation
+            const hamburger = document.getElementById("hamburger");
+            const nav = document.getElementById("nav");
+
+            hamburger.addEventListener("click", () => {
+                nav.classList.toggle("active");
+                hamburger.innerHTML = nav.classList.contains("active")
+                    ? '<i class="fas fa-times"></i>'
+                    : '<i class="fas fa-bars"></i>';
+            });
+
+            // Header scroll effect
+            const header = document.getElementById("header");
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 50) {
+                    header.classList.add("scrolled");
+                } else {
+                    header.classList.remove("scrolled");
+                }
+            });
+
+            // Countdown timer
+            function updateCountdown() {
+                const now = new Date();
+                const launchDate = new Date(
+                    now.getFullYear(),
+                    now.getMonth() + 1,
+                    1
+                ); // Next month
+
+                const diff = launchDate - now;
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor(
+                    (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+                );
+                const minutes = Math.floor(
+                    (diff % (1000 * 60 * 60)) / (1000 * 60)
+                );
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById("days").textContent = days
+                    .toString()
+                    .padStart(2, "0");
+                document.getElementById("hours").textContent = hours
+                    .toString()
+                    .padStart(2, "0");
+                document.getElementById("minutes").textContent = minutes
+                    .toString()
+                    .padStart(2, "0");
+                document.getElementById("seconds").textContent = seconds
+                    .toString()
+                    .padStart(2, "0");
+
+                document.getElementById(
+                    "countdown"
+                ).textContent = `${days}d ${hours}h ${minutes}m`;
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+                anchor.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    if (this.getAttribute("href") === "#") return;
+
+                    const target = document.querySelector(
+                        this.getAttribute("href")
+                    );
+                    if (target) {
+                        window.scrollTo({
+                            top: target.offsetTop - 80,
+                            behavior: "smooth",
+                        });
+
+                        // Close mobile menu if open
+                        if (nav.classList.contains("active")) {
+                            nav.classList.remove("active");
+                            hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+                        }
+                    }
+                });
+            });
+
+            // Form submissions
+
+
+
+    document.getElementById("waitlist-form").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const jsonData = {};
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+
+        try {
+            const response = await fetch("/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(jsonData),
+            });
+
+            if (response.ok) {
+                alert("Successfully joined the waitlist!");
+                this.reset();
+                updateProfileDropdown(); // Refresh profile status
+                updateViewProductButton(); // Check if they can view product now
+            } else {
+                alert("There was a problem submitting your info.");
+            }
+        } catch (error) {
+            alert("Error submitting form: " + error.message);
+        }
+    });
+
+
+            // Product page functionality
+            const viewProductBtn = document.getElementById("view-product-btn");
+            const productPage = document.getElementById("product-page");
+            const notifyBtn = document.getElementById("notify-btn");
+
+            viewProductBtn.addEventListener("click", () => {
+                const isPublic = getComputedStyle(document.documentElement)
+                    .getPropertyValue("--is-public")
+                    .trim();
+
+                if (isPublic === "true") {
+                    productPage.style.display = "block";
+                    window.scrollTo({
+                        top: productPage.offsetTop - 80,
+                        behavior: "smooth",
+                    });
+                } else {
+                    alert(
+                        "This product hasn't been released yet. Check back soon!"
+                    );
+                }
+            });
+
+            notifyBtn.addEventListener("click", () => {
+                document.getElementById("waitlist-modal").style.display =
+                    "flex";
+            });
+
+            // Waitlist modal
+            const waitlistModal = document.getElementById("waitlist-modal");
+            const openWaitlist = document.getElementById("open-waitlist");
+            const closeWaitlist = document.getElementById("close-waitlist");
+
+            openWaitlist.addEventListener("click", () => {
+                waitlistModal.style.display = "flex";
+            });
+
+            closeWaitlist.addEventListener("click", () => {
+                waitlistModal.style.display = "none";
+            });
+
+            window.addEventListener("click", (e) => {
+                if (e.target === waitlistModal) {
+                    waitlistModal.style.display = "none";
+                }
+            });
+
+            // Product gallery
+            const thumbnails = document.querySelectorAll(".product-thumbnail");
+            const mainImage = document.getElementById("main-image");
+
+            thumbnails.forEach((thumbnail) => {
+                thumbnail.addEventListener("click", () => {
+                    mainImage.src = thumbnail.getAttribute("data-image");
+                });
+            });
+
+            // Color options
+            const colorOptions = document.querySelectorAll(
+                "#color-options .option-btn"
+            );
+
+            colorOptions.forEach((option) => {
+                option.addEventListener("click", () => {
+                    colorOptions.forEach((opt) =>
+                        opt.classList.remove("selected")
+                    );
+                    option.classList.add("selected");
+
+                    // In a real implementation, you would change the images based on color
+                    // For example: mainImage.src = `images/${option.dataset.imageFolder}/main.jpg`;
+                });
+            });
+
+            // Size options
+            const sizeOptions = document.querySelectorAll(
+                "#size-options .option-btn"
+            );
+
+            sizeOptions.forEach((option) => {
+                option.addEventListener("click", () => {
+                    sizeOptions.forEach((opt) =>
+                        opt.classList.remove("selected")
+                    );
+                    option.classList.add("selected");
+                });
+            });
+
+            // Add to cart
+            const addToCartBtn = document.getElementById("add-to-cart");
+
+            addToCartBtn.addEventListener("click", () => {
+                const isPublic = getComputedStyle(document.documentElement)
+                    .getPropertyValue("--is-public")
+                    .trim();
+
+                if (isPublic === "true") {
+                    const selectedSize = document.querySelector(
+                        "#size-options .option-btn.selected"
+                    ).dataset.size;
+                    const selectedColor = document.querySelector(
+                        "#color-options .option-btn.selected"
+                    ).dataset.color;
+
+                    alert(
+                        `Added to cart: Size ${selectedSize}, Color ${selectedColor}`
+                    );
+                    // In a real implementation, you would add to cart system
+                } else {
+                    alert(
+                        "This product hasn't been released yet. You'll be able to add it to your cart when the drop goes live!"
+                    );
+                }
+            });
+
+            // Cart button
+            const cartBtn = document.querySelector('a[href="#cart"]');
+
+            cartBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                const isPublic = getComputedStyle(document.documentElement)
+                    .getPropertyValue("--is-public")
+                    .trim();
+
+                if (isPublic === "true") {
+                    alert("Cart system would show here with items");
+                } else {
+                    alert(
+                        "The store isn't open yet. Check back when the drop launches!"
+                    );
+                }
+            });
+
+            // Admin Panel
+            const adminToggle = document.getElementById("admin-toggle");
+            const adminControls = document.getElementById("admin-controls");
+            const togglePublicBtn = document.getElementById("toggle-public");
+
+                adminToggle.addEventListener('click', async () => {
+                    const userInput = prompt("Enter admin password:");
+
+                    if (!userInput) return; // User cancelled prompt
+
+                    try {
+                        const response = await fetch('/sl', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ password: userInput })
+                        });
+
+                        if (response.status === 200) {
+                            adminControls.style.display = 'block';
+                        } else if (response.status === 401) {
+                            alert("Incorrect password.");
+                        } else {
+                            alert("Unexpected error. Please try again.");
+                        }
+                    } catch (error) {
+                        console.error("Error during request:", error);
+                        alert("Network error. Please try again.");
+                    }
+                });
+
+            const viewSubmissionsBtn =
+                document.getElementById("view-submissions");
+
+            const viewAccountsBtn =
+                document.getElementById("view-accounts");
+
+            adminToggle.addEventListener("click", () => {
+                adminControls.classList.toggle("show");
+            });
+
+            togglePublicBtn.addEventListener("click", () => {
+                const root = document.documentElement;
+                const isPublic = getComputedStyle(root)
+                    .getPropertyValue("--is-public")
+                    .trim();
+
+                if (isPublic === "false") {
+                    root.style.setProperty("--is-public", "true");
+                    togglePublicBtn.textContent = "Make Private";
+                    alert("Site is now PUBLIC - all features enabled");
+                } else {
+                    root.style.setProperty("--is-public", "false");
+                    togglePublicBtn.textContent = "Make Public";
+                    alert("Site is now PRIVATE - only you can see everything");
+                }
+            });
+
+            viewAccountsBtn.addEventListener("click", () => {
+                window.location.replace("/accounts");
+            });
+
+            viewSubmissionsBtn.addEventListener("click", () => {
+                window.location.replace("/submissions");
+            });
+
+            // Initialize based on --is-public value
+            document.addEventListener("DOMContentLoaded", () => {
+                const isPublic = getComputedStyle(document.documentElement)
+                    .getPropertyValue("--is-public")
+                    .trim();
+                if (isPublic === "true") {
+                    document.getElementById("toggle-public").textContent =
+                        "Make Private";
+                }
+            });
+            // Check if user is picked and show/hide view product button
+
+            // Function to check if user is picked
+            async function checkPickedStatus() {
+                try {
+                    const response = await fetch("/check-picked", {
+                        method: "GET",
+                        credentials: "include" // Ensures cookies are sent
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch picked status");
+                    }
+
+                    const data = await response.json();
+                    const viewProductBtn = document.getElementById("view-product-btn");
+                    
+                    if (data.picked) {
+                        viewProductBtn.style.display = "block";
+                    } else {
+                        viewProductBtn.style.display = "none";
+                    }
+                } catch (error) {
+                    console.error("Error checking picked status:", error);
+                }
+            }
+
+            // Call this when the page loads
+            document.addEventListener("DOMContentLoaded", checkPickedStatus);
+
+            // Also check when login status changes (e.g., after login/logout)
+            const accountLinks = document.querySelectorAll('a[href*="login"], a[href*="logout"]');
+            accountLinks.forEach(link => {
+                link.addEventListener("click", () => {
+                    // Re-check after a slight delay (to allow cookie updates)
+                    setTimeout(checkPickedStatus, 500);
+                });
+            });
+            // Call this function when page loads
+            document.addEventListener("DOMContentLoaded", () => {
+                checkPickedStatus();
+                
+                // Also check when login status might change
+                const accountLinks = document.querySelectorAll('a[href*="login"], a[href*="logout"]');
+                accountLinks.forEach(link => {
+                    link.addEventListener("click", () => {
+                        // Add a small delay to allow cookie to update
+                        setTimeout(checkPickedStatus, 500);
+                    });
+                });
+            });
+            // Show/hide profile dropdown
+            // Profile dropdown functionality
+            async function updateProfileDropdown() {
+                const profileContainer = document.getElementById("profile-photo-container");
+                const profileEmail = document.getElementById("profile-email");
+                const profileDropdown = document.getElementById("profile-dropdown");
+                const statusElement = document.createElement('p'); // For waitlist status
+                statusElement.id = 'profile-status';
+                profileDropdown.appendChild(statusElement);
+
+                try {
+                    const response = await fetch("/user-status", {
+                        method: "GET",
+                        credentials: "include"
+                    });
+                    
+                    if (!response.ok) throw new Error("Failed to fetch user status");
+                    
+                    const data = await response.json();
+                    
+                    if (data.logged_in) {
+                        profileContainer.style.display = "block";
+                        profileEmail.textContent = data.email;
+                        
+                        // Update waitlist status in dropdown
+                        if (data.waitlist_status === "joined") {
+                            statusElement.textContent = data.picked 
+                                ? "Status: ✓ Picked for drop" 
+                                : "Status: Waiting list";
+                            statusElement.style.color = data.picked ? "green" : "var(--accent)";
+                        } else {
+                            statusElement.textContent = "Not on waitlist";
+                            statusElement.style.color = "var(--text-light)";
+                        }
+                    } else {
+                        profileContainer.style.display = "none";
+                    }
+                } catch (error) {
+                    console.error("Error updating profile:", error);
+                }
+            }
+
+            // Update view product button based on status
+            async function updateViewProductButton() {
+                try {
+                    const response = await fetch("/user-status", {
+                        method: "GET",
+                        credentials: "include"
+                    });
+                    
+                    if (!response.ok) throw new Error("Failed to fetch user status");
+                    
+                    const data = await response.json();
+                    const viewProductBtn = document.getElementById("view-product-btn");
+                    
+                    if (data.logged_in && data.picked) {
+                        viewProductBtn.style.display = "block";
+                    } else {
+                        viewProductBtn.style.display = "none";
+                    }
+                } catch (error) {
+                    console.error("Error updating product button:", error);
+                }
+            }
+
+            document.getElementById("signup-form").addEventListener("submit", async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const jsonData = {};
+                formData.forEach((value, key) => {
+                    jsonData[key] = value;
+                });
+
+                try {
+                    const response = await fetch("/register", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(jsonData)
+                    });
+
+                    if (response.ok) {
+                        window.location.href = "/"; // Redirect on success
+                    } else {
+                        const errorData = await response.json();
+                        alert(errorData.error || "Registration failed");
+                    }
+                } catch (error) {
+                    alert("Error submitting form: " + error.message);
+                }
+            });
+            // Initialize on page load
+            document.addEventListener("DOMContentLoaded", () => {
+                updateProfileDropdown();
+                updateViewProductButton();
+                
+                // Update when clicking auth-related links
+                const authLinks = document.querySelectorAll('a[href*="login"], a[href*="logout"], a[href*="register"]');
+                authLinks.forEach(link => {
+                    link.addEventListener("click", () => {
+                        setTimeout(() => {
+                            updateProfileDropdown();
+                            updateViewProductButton();
+                        }, 500);
+                    });
+                });
+                
+                // Profile photo click handler
+                const profilePhoto = document.getElementById("profile-photo");
+                const profileDropdown = document.getElementById("profile-dropdown");
+                
+                profilePhoto?.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    profileDropdown.style.display = profileDropdown.style.display === "block" ? "none" : "block";
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener("click", () => {
+                    profileDropdown.style.display = "none";
+                });
+            });
+                    </script>
+    </body>
+</html>
